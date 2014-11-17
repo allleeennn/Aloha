@@ -43,6 +43,24 @@ public class VitalSigns extends Data {
 	}
 	
 	/**
+	 * Return the urgency level of a patient with these vital signs.
+	 * @return The urgency level associated with this vital signs record.
+	 */
+	public int getUrgency() {
+		int urgency = 0;
+		if (systolic >= 140 || diastolic >= 90) {
+			urgency++;
+		}
+		if(heartRate >= 100 || heartRate < 50) {
+			urgency++;
+		}
+		if(temp > 39.0f) {
+			urgency++;
+		}
+		return urgency;
+	}
+	
+	/**
 	 * Returns a String representation of this VitalSigns object.
 	 * @return a String representation of this VitalSigns object.
 	 */

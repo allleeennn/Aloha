@@ -87,7 +87,7 @@ public class IndividualData extends Activity {
 	
 	
 	/**
-	 * Called upon clicking the update view previosu records button.
+	 * Called upon clicking the update view previous records button.
 	 * Passes on the health card number of the current patient as an extra and start the PreviousRecord activity.
 	 * @param view
 	 */

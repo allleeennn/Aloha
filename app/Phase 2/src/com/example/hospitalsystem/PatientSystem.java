@@ -7,10 +7,10 @@ public class PatientSystem implements Serializable {
 
 	/** This Patient System's serialization UID. */
 	private static final long serialVersionUID = -8472591340772528718L;
-	
+
 	/** The list of Patient Objects in the Patient System. */
 	protected List<Patient> patients;
-    
+
 	/** 
 	 * Constructs a Patient System with an ArrayList of Patient objects.
 	 */
@@ -24,6 +24,30 @@ public class PatientSystem implements Serializable {
 	 */
 	public List<Patient> getPatientsList() {
 		return this.patients;
+	}
+
+	/**
+	 * The list of patients sorted by descending urgency not yet seen by a doctor.
+	 * @return A list of all patients not yet seen by a doctor sorted by decreasing urgency.
+	 */
+	public List<Patient> getPatientListNotSeenByDoctor() {
+		List<Patient> sortedList = new ArrayList<Patient>();
+		//Make the list of patients not yet seen by doctor.
+		for(Patient p: patients) {
+			if (p.notSeenByDoctor()){
+				if(sortedList.size() == 0) {
+					sortedList.add(p);
+				}
+				else{
+					for (int i = sortedList.size() - 1; i >= 0; i--) {
+						if(sortedList.get(i).getUrgency() >= p.getUrgency()) {
+							sortedList.add(i+1, p);
+						}
+					}
+				}
+			}
+		}
+		return sortedList;
 	}
 
 	/***
@@ -41,6 +65,13 @@ public class PatientSystem implements Serializable {
 		return text_file;
 	}
 
+	/**
+	 * Appends patient p to this patientSystem.
+	 * @param p The patient to be added.
+	 */
+	public void addPatient(Patient p) {
+		patients.add(0, p);
+	}
 
 	/***
 	 * Populates the Patient System with Patient Objects from a file.
@@ -72,7 +103,7 @@ public class PatientSystem implements Serializable {
 		patient.addVitalSigns(vitals);
 	}
 
-	
+
 	/**
 	 * Serializes this Patient System to a file.
 	 * @param dir a File.
@@ -81,17 +112,17 @@ public class PatientSystem implements Serializable {
 	public void serialize(File dir) throws FileNotFoundException {
 		FileOutputStream stream = new FileOutputStream(dir + "/patient_system.ser");
 		try {
-		ObjectOutputStream oos = new ObjectOutputStream(stream);
-		oos.writeObject(this);
-		oos.close();
+			ObjectOutputStream oos = new ObjectOutputStream(stream);
+			oos.writeObject(this);
+			oos.close();
 		}catch(IOException i)
 		{
 			i.printStackTrace();
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Deserializes a file with a serialized Patient System and returns that Patient System.
 	 * @param dir a file.
@@ -105,30 +136,30 @@ public class PatientSystem implements Serializable {
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			try {
 				patientSystem = (PatientSystem) ois.readObject();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-					}
-				ois.close();
-				} catch (StreamCorruptedException e) {
-						e.printStackTrace();
-				} catch (IOException e) {
-						e.printStackTrace();
-				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			ois.close();
+		} catch (StreamCorruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Patient currentPatient = null;
 		for (int i = 0; i < patientSystem.getPatientsList().size(); i++){
-				currentPatient = patientSystem.getPatientsList().get(i);
-				try{
-					currentPatient = patientSystem.getPatientsList().get(i).deserialize(dir);
-				}catch (FileNotFoundException e){
-					e.printStackTrace();
-				}
-				patientSystem.patients.set(i,currentPatient);
+			currentPatient = patientSystem.getPatientsList().get(i);
+			try{
+				currentPatient = patientSystem.getPatientsList().get(i).deserialize(dir);
+			}catch (FileNotFoundException e){
+				e.printStackTrace();
+			}
+			patientSystem.patients.set(i,currentPatient);
 		}
-		
-		
+
+
 		return patientSystem;
 	}
-	
+
 	/**
 	 * Returns a toString representation of this Patient System.
 	 * @return a toString representation of this Patient System.
@@ -139,9 +170,9 @@ public class PatientSystem implements Serializable {
 			returnString += patient.toString() + "\n";
 		}
 		return returnString;
-		
+
 	}
-	
+
 	/***
 	 * Looks up a Patient in this Patient System given a health card number.
 	 * @param healthCardNumber a Patient's Health Card Number.

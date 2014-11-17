@@ -183,4 +183,21 @@ public class Time implements Comparable<Object>, Serializable{
 		}
 		return Integer.toString(this.year) + "/" + monthString + "/" + dayString;
 	}
+	
+	/**
+	 * Return if this time is at least two years past otherTime.
+	 * @param otherTime The time in the past to be compared to this time.
+	 * @return
+	 */
+	public boolean twoYearsPassed(Time otherTime) {
+		if (this.year - otherTime.year > 2){
+			return true;
+		}
+		else if (this.year - otherTime.year == 2){
+			if(this.month > otherTime.month || (this.month == otherTime.month && this.day >= otherTime.day)){
+				return true;
+			}
+		}
+		return false;
+	}
 }
