@@ -32,6 +32,12 @@ public class Patient implements Serializable {
 	/** A list of vital signs for this Patient. */
 	private List<VitalSigns> vitalSignsRecord;
 	
+	/** A list of times representing when this patient has been seen by a doctor. */
+	private List<Time> timeSeenByDoctor;
+	
+	/** An integer between 0-4 inclusive, representing the urgency level according to this hospital's policy. */
+	private int urgency;
+	
 	/**
 	 * Constructs a Patient object with name, date of birth, health card number,
 	 * and arrival time.
@@ -46,6 +52,7 @@ public class Patient implements Serializable {
 		this.dob = dob;
 		vitalSignsRecord = new ArrayList<VitalSigns>();
 		this.arrivalTime = arrivalTime;
+		this.timeSeenByDoctor = new ArrayList<Time>();
 	}
 	
 	/**
@@ -60,6 +67,7 @@ public class Patient implements Serializable {
 		this.dob = dob;
 		vitalSignsRecord = new ArrayList<VitalSigns>();
 		this.arrivalTime = null;
+		this.timeSeenByDoctor = new ArrayList<Time>();
 	}
 	
 	/**
@@ -68,6 +76,23 @@ public class Patient implements Serializable {
 	 */
 	public void addVitalSigns(VitalSigns v) {
 		vitalSignsRecord.add(0,v);
+		urgency = v.getUrgency();
+	}
+	
+	/**
+	 * Adds this time as a time where the patient has been seen by a doctor.
+	 * @param t The time this patient has been seen by a doctor.
+	 */
+	public void addDoctorVisit(Time t){
+		timeSeenByDoctor.add(0, t);
+	}
+	
+	/**
+	 * Gets a list of the times this patient has been seen by a doctor.
+	 * @return A list containing every time that a doctor has seen this patient.
+	 */
+	public List<Time> getDoctorVisits(){
+		return timeSeenByDoctor;
 	}
 	
 	/**
@@ -76,6 +101,18 @@ public class Patient implements Serializable {
 	 */
 	public String getName() {
 		return this.name;
+	}
+	
+	/**
+	 * Return this patent's urgency level according to hospital policy.
+	 * @return The current urgency level of this patient.
+	 */
+	public int getUrgency(){
+		//Note here a new time with no arguments is just the current time.
+		if(new Time().twoYearsPassed(this.dob)){
+			return urgency + 1;
+		}
+		return urgency;
 	}
 	
 	/**
@@ -93,7 +130,7 @@ public class Patient implements Serializable {
 	 * false otherwise.
 	 */
 	public boolean healthCardNumberEquals(String number) {
-		return number.equals(healthCardNumber);
+		return number.equals(this.healthCardNumber);
 	}
 	
 	/**
@@ -112,6 +149,15 @@ public class Patient implements Serializable {
 		return this.vitalSignsRecord;
 	}
 	
+	public boolean notSeenByDoctor() {
+		return this.timeSeenByDoctor.size() == 0;
+	}
+	
+	/**
+	 * Returns an ArrayList containing all the times that a patient has had his/her 
+	 * vital signs record updated.
+	 * @return An ArrayList containing all times of all VitalSigns. 
+	 */
 	public ArrayList<String> getArrayListofRecordsTime(){
 		ArrayList<String> records = new ArrayList<String>();
 		for (VitalSigns iterator:this.getVitalSignsRecord()){
